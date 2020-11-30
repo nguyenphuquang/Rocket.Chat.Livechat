@@ -36,6 +36,7 @@ export const validCallbacks = [
 	'agent-status-change',
 	'queue-position-change',
 	'no-agent-online',
+	'send-message',
 ];
 
 const callbacks = mitt();
@@ -221,6 +222,10 @@ const api = {
 		iframe.style.display = 'none';
 		emitCallback('hide-widget');
 	},
+
+	sendMessage(message) {
+		emitCallback('send-message');
+	},
 };
 
 function pageVisited(change) {
@@ -244,6 +249,10 @@ function setTheme(theme) {
 
 function setDepartment(department) {
 	callHook('setDepartment', department);
+}
+
+function sendMessage(message) {
+	callHook('sendMessage', message);
 }
 
 function setGuestToken(token) {
@@ -335,6 +344,9 @@ function initialize(params) {
 			case 'agent':
 				setAgent(params[method]);
 				continue;
+      case 'send-message':
+				setMessage(params[method]);
+				continue;
 			default:
 				continue;
 		}
@@ -419,6 +431,7 @@ window.RocketChat.livechat = {
 	hideWidget,
 	maximizeWidget,
 	minimizeWidget,
+	sendMessage,
 
 	// callbacks
 	onChatMaximized(fn) { registerCallback('chat-maximized', fn); },
@@ -433,6 +446,7 @@ window.RocketChat.livechat = {
 	onAgentStatusChange(fn) { registerCallback('agent-status-change', fn); },
 	onQueuePositionChange(fn) { registerCallback('queue-position-change', fn); },
 	onServiceOffline(fn) { registerCallback('no-agent-online', fn); },
+	onSendMessage(fn) { registerCallback('send-message', fn); },
 };
 
 // proccess queue

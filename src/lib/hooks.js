@@ -68,6 +68,11 @@ const api = {
 		updateIframeGuestData({ department });
 	},
 
+	sendMessage(msg) {
+		const { token } = store.state;
+    Livechat.sendMessage({ msg, token, rid })
+	},
+
 	clearDepartment() {
 		updateIframeGuestData({ department: '' });
 	},
@@ -151,6 +156,7 @@ const api = {
 		store.setState({ minimized: false });
 		parentCall('openWidget');
 	},
+
 };
 
 const onNewMessage = (event) => {
