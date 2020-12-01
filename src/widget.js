@@ -326,6 +326,9 @@ function initialize(params) {
 			case 'department':
 				setDepartment(params[method]);
 				continue;
+      case 'send-message':
+				sendMessage(params[method]);
+				continue;
 			case 'guestToken':
 				setGuestToken(params[method]);
 				continue;
@@ -343,9 +346,6 @@ function initialize(params) {
 				continue;
 			case 'agent':
 				setAgent(params[method]);
-				continue;
-      case 'send-message':
-				setMessage(params[method]);
 				continue;
 			default:
 				continue;
@@ -420,6 +420,7 @@ window.RocketChat.livechat = {
 	initialize,
 	setTheme,
 	setDepartment,
+	sendMessage,
 	clearDepartment,
 	setGuestToken,
 	setGuestName,
@@ -431,7 +432,6 @@ window.RocketChat.livechat = {
 	hideWidget,
 	maximizeWidget,
 	minimizeWidget,
-	sendMessage,
 
 	// callbacks
 	onChatMaximized(fn) { registerCallback('chat-maximized', fn); },
