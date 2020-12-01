@@ -5,6 +5,7 @@ import CustomFields from './customFields';
 import { setWidgetLanguage } from './locale';
 import { loadConfig } from './main';
 import { parentCall } from './parentCall';
+import { initRoom, defaultRoomParams } from './room';
 import Triggers from './triggers';
 
 const createOrUpdateGuest = async (guest) => {
@@ -68,9 +69,24 @@ const api = {
 		updateIframeGuestData({ department });
 	},
 
-	sendMessage(msg) {
+	getRoom: async () => {
+		try {
+			const params = defaultRoomParams();
+			const newRoom = await Livechat.room(params);
+			await initRoom();
+
+			return newRoom;
+		} catch (e) {
+			console.log('[getRoom] error', e);
+		}
+	},
+
+	sendMessage: async (msg) => {
 		const { token } = store.state;
-    Livechat.sendMessage({ msg, token, rid })
+		const room = await this.getRoom();
+		if (room) {
+			Livechat.sendMessage({ msg, token, rid: room._id });
+		}
 	},
 
 	clearDepartment() {

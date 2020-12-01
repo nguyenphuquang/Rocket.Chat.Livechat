@@ -224,7 +224,7 @@ const api = {
 	},
 
 	sendMessage(message) {
-		emitCallback('send-message');
+		emitCallback('send-message', message);
 	},
 };
 
@@ -326,7 +326,7 @@ function initialize(params) {
 			case 'department':
 				setDepartment(params[method]);
 				continue;
-      case 'send-message':
+			case 'send-message':
 				sendMessage(params[method]);
 				continue;
 			case 'guestToken':
