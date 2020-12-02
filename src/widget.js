@@ -59,14 +59,17 @@ function emitCallback(eventName, data) {
 
 // hooks
 function callHook(action, params) {
+	console.log('===[callHook]', action, params, ready);
 	if (!ready) {
 		return hookQueue.push([action, params]);
 	}
+	console.log('===[callHook2]');
 	const data = {
 		src: 'rocketchat',
 		fn: action,
 		args: params,
 	};
+	// window.postMessage(data, '*');
 	iframe.contentWindow.postMessage(data, '*');
 }
 
@@ -252,6 +255,7 @@ function setDepartment(department) {
 }
 
 function sendMessage(message) {
+	console.log('====[sendMessage]2', message);
 	callHook('sendMessage', message);
 }
 
@@ -327,6 +331,7 @@ function initialize(params) {
 				setDepartment(params[method]);
 				continue;
 			case 'send-message':
+				console.log('====[sendMessage]1');
 				sendMessage(params[method]);
 				continue;
 			case 'guestToken':
@@ -360,10 +365,12 @@ const currentPage = {
 
 const attachMessageListener = () => {
 	window.addEventListener('message', (msg) => {
+		console.log('[livechat][received message]', msg);
 		if (typeof msg.data === 'object' && msg.data.src !== undefined && msg.data.src === 'rocketchat') {
 			if (api[msg.data.fn] !== undefined && typeof api[msg.data.fn] === 'function') {
 				const args = [].concat(msg.data.args || []);
 				log(`api.${ msg.data.fn }`, ...args);
+				console.log(`api.${ msg.data.fn }`, ...args);
 				api[msg.data.fn].apply(null, args);
 			}
 		}

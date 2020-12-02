@@ -5,7 +5,6 @@ import CustomFields from './customFields';
 import { setWidgetLanguage } from './locale';
 import { loadConfig } from './main';
 import { parentCall } from './parentCall';
-import { initRoom, defaultRoomParams } from './room';
 import Triggers from './triggers';
 
 const createOrUpdateGuest = async (guest) => {
@@ -69,24 +68,8 @@ const api = {
 		updateIframeGuestData({ department });
 	},
 
-	getRoom: async () => {
-		try {
-			const params = defaultRoomParams();
-			const newRoom = await Livechat.room(params);
-			await initRoom();
-
-			return newRoom;
-		} catch (e) {
-			console.log('[getRoom] error', e);
-		}
-	},
-
-	sendMessage: async (msg) => {
-		const { token } = store.state;
-		const room = await this.getRoom();
-		if (room) {
-			Livechat.sendMessage({ msg, token, rid: room._id });
-		}
+	sendMessage(msg) {
+		store.setState({ minimized: false, messageToSend: msg });
 	},
 
 	clearDepartment() {
@@ -169,20 +152,24 @@ const api = {
 	},
 
 	maximizeWidget() {
-		store.setState({ minimized: false });
+		store.setState({ messageToSend: 'abc' });
 		parentCall('openWidget');
 	},
 
 };
 
 const onNewMessage = (event) => {
+	console.log('====[onNewMessage]1', event.source, event.target, event);
 	if (event.source === event.target) {
 		return;
 	}
+	console.log('====[onNewMessage]2', event.data);
 
 	if (typeof event.data === 'object' && event.data.src !== undefined && event.data.src === 'rocketchat') {
+		console.log('====[onNewMessage]3', api[event.data.fn]);
 		if (api[event.data.fn] !== undefined && typeof api[event.data.fn] === 'function') {
 			const args = [].concat(event.data.args || []);
+			console.log('====[onNewMessage]4', args);
 			api[event.data.fn].apply(null, args);
 		}
 	}

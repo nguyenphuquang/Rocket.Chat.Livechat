@@ -309,22 +309,28 @@ export class ChatContainer extends Component {
 		this.handleConnectingAgentAlert(false);
 	}
 
-	render = ({ user, ...props }) => (
-		<Chat
-			{...props}
-			avatarResolver={getAvatarUrl}
-			uid={user && user._id}
-			onTop={this.handleTop}
-			onChangeText={this.handleChangeText}
-			onSubmit={this.handleSubmit}
-			onUpload={this.handleUpload}
-			options={this.showOptionsMenu()}
-			onChangeDepartment={(this.canSwitchDepartment() && this.onChangeDepartment) || null}
-			onFinishChat={(this.canFinishChat() && this.onFinishChat) || null}
-			onRemoveUserData={(this.canRemoveUserData() && this.onRemoveUserData) || null}
-			onSoundStop={this.handleSoundStop}
-		/>
-	)
+	render = ({ user, ...props }) => {
+		if (this.props.messageToSend) {
+			this.handleSubmit(this.props.messageToSend);
+			this.props.dispatch({ messageToSend: '' });
+		}
+		return (
+			<Chat
+				{...props}
+				avatarResolver={getAvatarUrl}
+				uid={user && user._id}
+				onTop={this.handleTop}
+				onChangeText={this.handleChangeText}
+				onSubmit={this.handleSubmit}
+				onUpload={this.handleUpload}
+				options={this.showOptionsMenu()}
+				onChangeDepartment={(this.canSwitchDepartment() && this.onChangeDepartment) || null}
+				onFinishChat={(this.canFinishChat() && this.onFinishChat) || null}
+				onRemoveUserData={(this.canRemoveUserData() && this.onRemoveUserData) || null}
+				onSoundStop={this.handleSoundStop}
+			/>
+		);
+	}
 }
 
 
@@ -373,6 +379,7 @@ export const ChatConnector = ({ ref, ...props }) => (
 			lastReadMessageId,
 			triggerAgent,
 			queueInfo,
+			messageToSend,
 		}) => (
 			<ChatContainer
 				ref={ref}
@@ -425,6 +432,7 @@ export const ChatConnector = ({ ref, ...props }) => (
 					message: queueInfo.message,
 				} : undefined}
 				limitTextLength={limitTextLength}
+				messageToSend={messageToSend}
 			/>
 		)}
 	</Consumer>
